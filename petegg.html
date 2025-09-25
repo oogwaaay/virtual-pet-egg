@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>电子宠物蛋</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial Rounded MT Bold', 'Arial', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            color: #5a3921;
+        }
+        
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            padding: 25px;
+            margin-top: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            color: #e67e22;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 10px;
+        }
+        
+        .pet-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 30px 0;
+        }
+        
+        .pet-egg {
+            width: 200px;
+            height: 250px;
+            background: linear-gradient(to bottom, #f9d5bb 0%, #f9d5bb 60%, #f1bda1 100%);
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            position: relative;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .pet-face {
+            position: relative;
+            width: 120px;
+            height: 100px;
+        }
+        
+        .eyes {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 15px;
+        }
+        
+        .eye {
+            width: 30px;
+            height: 30px;
+            background-color: #5a3921;
+            border-radius: 50%;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .eye::after {
+            content: '';
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background-color: white;
+            border-radius: 50%;
+            top: 5px;
+            left: 5px;
+        }
+        
+        .mouth {
+            width: 50px;
+            height: 20px;
+            background-color: #5a3921;
+            border-radius: 0 0 25px 25px;
+            margin: 0 auto;
+            transition: all 0.3s ease;
+        }
+        
+        .happy .mouth {
+            height: 25px;
+            border-radius: 50%;
+            background-color: #e74c3c;
+        }
+        
+        .hungry .mouth {
+            width: 40px;
+            height: 10px;
+            border-radius: 5px;
+        }
+        
+        .dirty .pet-egg {
+            background: linear-gradient(to bottom, #d3c6bd 0%, #d3c6bd 60%, #c9b3a6 100%);
+        }
+        
+        .status-bars {
+            width: 100%;
+            max-width: 500px;
+            margin: 20px 0;
+        }
+        
+        .status-bar {
+            margin-bottom: 15px;
+        }
+        
+        .status-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .bar-container {
+            height: 20px;
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .bar {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+        
+        .hunger-bar {
+            background: linear-gradient(to right, #e74c3c, #e67e22);
+        }
+        
+        .cleanliness-bar {
+            background: linear-gradient(to right, #3498db, #2ecc71);
+        }
+        
+        .happiness-bar {
+            background: linear-gradient(to right, #f1c40f, #e67e22);
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 25px 0;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 15px 25px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .btn:active {
+            transform: translateY(1px);
+        }
+        
+        .feed-btn {
+            background: linear-gradient(to right, #e67e22, #e74c3c);
+            color: white;
+        }
+        
+        .clean-btn {
+            background: linear-gradient(to right, #3498db, #2ecc71);
+            color: white;
+        }
+        
+        .play-btn {
+            background: linear-gradient(to right, #f1c40f, #e67e22);
+            color: white;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #2ecc71;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transform: translateX(120%);
+            transition: transform 0.5s ease;
+            z-index: 1000;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .save-indicator {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: #7f8c8d;
+        }
+        
+        .last-saved {
+            font-weight: bold;
+            color: #e67e22;
+        }
+        
+        .egg-animation {
+            animation: bounce 2s infinite ease-in-out;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+        
+        .happy-animation {
+            animation: happyJump 0.8s ease;
+        }
+        
+        @keyframes happyJump {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-30px); }
+        }
+        
+        .eating-animation {
+            animation: eat 1s ease;
+        }
+        
+        @keyframes eat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .cleaning-animation {
+            animation: clean 1.5s ease;
+        }
+        
+        @keyframes clean {
+            0%, 100% { transform: rotate(0); }
+            25% { transform: rotate(15deg); }
+            75% { transform: rotate(-15deg); }
+        }
+        
+        @media (max-width: 600px) {
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                max-width: 300px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🐣 电子宠物蛋 🥚</h1>
+            <p>照顾你的宠物蛋，让它健康快乐地成长！</p>
+        </header>
+        
+        <div class="pet-container">
+            <div class="pet-egg egg-animation" id="petEgg">
+                <div class="pet-face">
+                    <div class="eyes">
+                        <div class="eye"></div>
+                        <div class="eye"></div>
+                    </div>
+                    <div class="mouth" id="mouth"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="status-bars">
+            <div class="status-bar">
+                <div class="status-label">
+                    <span>饥饿度</span>
+                    <span id="hungerValue">100%</span>
+                </div>
+                <div class="bar-container">
+                    <div class="bar hunger-bar" id="hungerBar" style="width: 100%;"></div>
+                </div>
+            </div>
+            
+            <div class="status-bar">
+                <div class="status-label">
+                    <span>清洁度</span>
+                    <span id="cleanlinessValue">100%</span>
+                </div>
+                <div class="bar-container">
+                    <div class="bar cleanliness-bar" id="cleanlinessBar" style="width: 100%;"></div>
+                </div>
+            </div>
+            
+            <div class="status-bar">
+                <div class="status-label">
+                    <span>心情值</span>
+                    <span id="happinessValue">100%</span>
+                </div>
+                <div class="bar-container">
+                    <div class="bar happiness-bar" id="happinessBar" style="width: 100%;"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button class="btn feed-btn" id="feedBtn">
+                <span>🍼 喂食</span>
+            </button>
+            <button class="btn clean-btn" id="cleanBtn">
+                <span>🧼 清洁</span>
+            </button>
+            <button class="btn play-btn" id="playBtn">
+                <span>🎮 玩耍</span>
+            </button>
+        </div>
+        
+        <div class="save-indicator">
+            数据自动保存: <span class="last-saved" id="lastSaved">刚刚</span>
+        </div>
+    </div>
+    
+    <div class="notification" id="notification">操作成功！</div>
+    
+    <script>
+        // 宠物状态
+        const pet = {
+            hunger: 100,
+            cleanliness: 100,
+            happiness: 100,
+            lastSaved: new Date()
+        };
+        
+        // DOM元素
+        const elements = {
+            hungerBar: document.getElementById('hungerBar'),
+            cleanlinessBar: document.getElementById('cleanlinessBar'),
+            happinessBar: document.getElementById('happinessBar'),
+            hungerValue: document.getElementById('hungerValue'),
+            cleanlinessValue: document.getElementById('cleanlinessValue'),
+            happinessValue: document.getElementById('happinessValue'),
+            feedBtn: document.getElementById('feedBtn'),
+            cleanBtn: document.getElementById('cleanBtn'),
+            playBtn: document.getElementById('playBtn'),
+            petEgg: document.getElementById('petEgg'),
+            mouth: document.getElementById('mouth'),
+            notification: document.getElementById('notification'),
+            lastSaved: document.getElementById('lastSaved')
+        };
+        
+        // 初始化
+        function init() {
+            loadPetData();
+            updateStatusBars();
+            setupEventListeners();
+            startStatusDecay();
+            startAutoSave();
+        }
+        
+        // 加载宠物数据
+        function loadPetData() {
+            const savedPet = localStorage.getItem('virtualPet');
+            if (savedPet) {
+                const parsed = JSON.parse(savedPet);
+                pet.hunger = parsed.hunger;
+                pet.cleanliness = parsed.cleanliness;
+                pet.happiness = parsed.happiness;
+                pet.lastSaved = new Date(parsed.lastSaved);
+                
+                // 计算从上次保存到现在的时间差（小时）
+                const hoursPassed = (new Date() - pet.lastSaved) / (1000 * 60 * 60);
+                if (hoursPassed > 0) {
+                    // 根据经过的时间减少状态值
+                    pet.hunger = Math.max(0, pet.hunger - hoursPassed * 8);
+                    pet.cleanliness = Math.max(0, pet.cleanliness - hoursPassed * 5);
+                    pet.happiness = Math.max(0, pet.happiness - hoursPassed * 6);
+                }
+                
+                updateLastSavedText();
+            }
+        }
+        
+        // 更新状态条
+        function updateStatusBars() {
+            elements.hungerBar.style.width = `${pet.hunger}%`;
+            elements.cleanlinessBar.style.width = `${pet.cleanliness}%`;
+            elements.happinessBar.style.width = `${pet.happiness}%`;
+            
+            elements.hungerValue.textContent = `${Math.round(pet.hunger)}%`;
+            elements.cleanlinessValue.textContent = `${Math.round(pet.cleanliness)}%`;
+            elements.happinessValue.textContent = `${Math.round(pet.happiness)}%`;
+            
+            updatePetAppearance();
+        }
+        
+        // 更新宠物外观
+        function updatePetAppearance() {
+            // 重置所有状态类
+            elements.petEgg.classList.remove('hungry', 'dirty', 'happy');
+            elements.mouth.classList.remove('happy', 'hungry');
+            
+            // 根据状态添加相应类
+            if (pet.hunger < 30) {
+                elements.petEgg.classList.add('hungry');
+                elements.mouth.classList.add('hungry');
+            }
+            
+            if (pet.cleanliness < 30) {
+                elements.petEgg.classList.add('dirty');
+            }
+            
+            if (pet.happiness > 70 && pet.hunger > 50 && pet.cleanliness > 50) {
+                elements.petEgg.classList.add('happy');
+                elements.mouth.classList.add('happy');
+            }
+        }
+        
+        // 设置事件监听器
+        function setupEventListeners() {
+            elements.feedBtn.addEventListener('click', () => {
+                pet.hunger = Math.min(100, pet.hunger + 15);
+                elements.petEgg.classList.add('eating-animation');
+                setTimeout(() => {
+                    elements.petEgg.classList.remove('eating-animation');
+                }, 1000);
+                showNotification('喂食成功！宠物蛋吃饱了 🍎');
+                updateStatusBars();
+                savePetData();
+            });
+            
+            elements.cleanBtn.addEventListener('click', () => {
+                pet.cleanliness = Math.min(100, pet.cleanliness + 20);
+                elements.petEgg.classList.add('cleaning-animation');
+                setTimeout(() => {
+                    elements.petEgg.classList.remove('cleaning-animation');
+                }, 1500);
+                showNotification('清洁完成！宠物蛋闪闪发光 ✨');
+                updateStatusBars();
+                savePetData();
+            });
+            
+            elements.playBtn.addEventListener('click', () => {
+                pet.happiness = Math.min(100, pet.happiness + 15);
+                elements.petEgg.classList.add('happy-animation');
+                setTimeout(() => {
+                    elements.petEgg.classList.remove('happy-animation');
+                }, 800);
+                showNotification('玩耍结束！宠物蛋很开心 🎮');
+                updateStatusBars();
+                savePetData();
+            });
+        }
+        
+        // 状态自然衰减
+        function startStatusDecay() {
+            setInterval(() => {
+                pet.hunger = Math.max(0, pet.hunger - 0.5);
+                pet.cleanliness = Math.max(0, pet.cleanliness - 0.3);
+                pet.happiness = Math.max(0, pet.happiness - 0.4);
+                updateStatusBars();
+            }, 60000); // 每分钟更新一次
+        }
+        
+        // 自动保存
+        function startAutoSave() {
+            setInterval(() => {
+                savePetData();
+                showNotification('数据已自动保存 💾');
+            }, 3600000); // 每小时保存一次
+        }
+        
+        // 保存宠物数据
+        function savePetData() {
+            pet.lastSaved = new Date();
+            localStorage.setItem('virtualPet', JSON.stringify(pet));
+            updateLastSavedText();
+        }
+        
+        // 更新最后保存时间文本
+        function updateLastSavedText() {
+            const now = new Date();
+            const diffMinutes = Math.floor((now - pet.lastSaved) / (1000 * 60));
+            
+            if (diffMinutes < 1
